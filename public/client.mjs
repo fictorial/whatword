@@ -311,11 +311,11 @@ function onGuess({ player, score, guessNumber }) {
 function onLocalPlayerGuessScored(score, guess, guessNumber) {
   const exactMatchesFound = score.match(exactMatchCountRegex)?.length ?? 0
   const didGuessWord = exactMatchesFound === 5
-
   localPlayerGuessedWord = didGuessWord
 
-  const overrideClassName = didGuessWord ? exactMatchClass : null
+  // Decorate the local guess letters with their letter scores.
 
+  const overrideClassName = didGuessWord ? exactMatchClass : null
   for (let letterNumber = 0; letterNumber < 5; ++letterNumber) {
     const letterScore = score.charAt(letterNumber)
     addScoreClasses(
@@ -325,33 +325,45 @@ function onLocalPlayerGuessScored(score, guess, guessNumber) {
     )
   }
 
-  // lighting up the keyboard is a bit trickier. You can't just say well "G" was an exact match.
-  // There could be duplicate letters as in the secret word "BAGGY". While the local guess letters
-  // and the all guess score colors are 1:1 with letters of the scored guess (i.e. there are 5
-  // letters in the guess), there's just one letter per keyboard key. Thus, we opt to light up the
-  // keyboard key with the best score (exact match > shift match > no match).
+  // Decorate the keyboard keys based on this most recent guess.
+  // It's a bit tricky in that there could be duplicate letters in the guess
+  // but there's only one keyboard key for that letter.
+  // We choose to decorate the keyboard key based on the "best" letter score
+  // in such cases.
 
+  const duplicateLetters = new Set()
+  for (let i = 0; i < 5; ++i) {
+    const Gi = guess.charAt(i)
+    for (let j = 0; j < 5; ++j) {
+      if (i === j) continue
+      const Gj = guess.charAt(j)
+      if (Gi === Gj) duplicateLetters.add(Gi)
+    }
+  }
   const letterScoreValues = {
     [noMatch]: 0,
     [shiftMatch]: 1,
     [exactMatch]: 2,
   }
-  const classesForLetterScoreValues = [noMatchClass, shiftMatchClass, exactMatchClass]
-  const invertedLetterScoreValues = [noMatch, shiftMatch, exactMatch]
-  const bestLetterScores = {}
-  for (let letter of guess.split("")) {
-    let bestLetterScore = -1
-    for (let letterScore of score.split(""))
-      bestLetterScore = Math.max(bestLetterScore, letterScoreValues[letterScore])
-    bestLetterScores[letter] = bestLetterScore
+  const bestLetterScores = new Map()
+  for (let duplicateLetter of duplicateLetters) {
+    let bestLetterScore = noMatch
+    for (let i = 0; i < 5; ++i) {
+      if (guess.charAt(i) === duplicateLetter) {
+        const Si = score.charAt(i)
+        if (letterScoreValues[Si] > letterScoreValues[bestLetterScore]) bestLetterScore = Si
   }
-  for (let [letter, value] of Object.entries(bestLetterScores)) {
-    addScoreClasses(
-      getKeyboardKey(letter),
-      invertedLetterScoreValues[value],
-      classesForLetterScoreValues[value]
-    )
+    }
+    bestLetterScores.set(duplicateLetter, bestLetterScore)
   }
+  for (let [letter, score] of bestLetterScores.entries())
+    addScoreClasses(getKeyboardKey(letter), score)
+  for (let i = 0; i < 5; ++i) {
+    const Gi = guess.charAt(i)
+    if (!duplicateLetters.has(Gi)) addScoreClasses(getKeyboardKey(Gi), score.charAt(i))
+  }
+
+  // Make it obvious that the local player got the secret word (or didn't).
 
   if (didGuessWord) {
     for (let letterNumber = 0; letterNumber < 5; ++letterNumber) {
@@ -360,12 +372,13 @@ function onLocalPlayerGuessScored(score, guess, guessNumber) {
     }
 
     showMessage(localGuessNumber === 6 ? "Alright! 😅" : randomElement(foundWordMessages))
-
     setTimeout(() => showMessage("waiting for others to finish..."), 3000)
     showFireworks()
   } else if (localGuessNumber === 6 - 1) {
     showMessage(randomElement(sorryMessages))
   }
+
+  // Onward...
 
   localGuessNumber = guessNumber + 1
   localGuessLetters = []
