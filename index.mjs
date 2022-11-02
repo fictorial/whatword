@@ -115,8 +115,7 @@ app.post("/guesses", function onGuessMade(req, res) {
 })
 
 // In expert mode, the player has to use in the current guess the letters that
-// exactly matched in the most recent guess that has any exact matches... That
-// sounds weird but note that players may toggle expert mode mid-game.
+// were found in the secret word in any previous guess (of the same game).
 
 function checkExpertModeSatisfied(guess, selfGuesses) {
   if (selfGuesses.length === 0) return
