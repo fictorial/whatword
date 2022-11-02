@@ -121,6 +121,12 @@
   }
 }
 
+@keyframes floating-genie {
+  100% {
+    transform: translateY(-0.5rem)
+  }
+}
+
 .fade-in {
   animation: fade-in var(--fade-duration) ease forwards;
 }
@@ -155,6 +161,10 @@
 
 .bounceIn {
   animation: bounce-in var(--bounce-duration) ease forwards;
+}
+
+.floating-genie {
+  animation: floating-genie 3s infinite ease-in-out alternate;
 }
 
 @font-face {
@@ -314,13 +324,6 @@ header .emoji {
   left: 100%;
   translate: calc(-50% + 1.7vh) -50%;
   text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-  animation: emoji 3s infinite ease-in-out alternate;
-}
-
-@keyframes emoji {
-  100% {
-    transform: translateY(-4px)
-  }
 }
 
 .countdown {
@@ -633,8 +636,6 @@ header a[href="#settings"] {
     gap: 0;
     margin-bottom: 1ch;
   }
-
-  .keyboard-row {}
 
   .key {
     border: none;

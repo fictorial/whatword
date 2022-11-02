@@ -352,7 +352,7 @@ function onLocalPlayerGuessScored(score, guess, guessNumber) {
       if (guess.charAt(i) === duplicateLetter) {
         const Si = score.charAt(i)
         if (letterScoreValues[Si] > letterScoreValues[bestLetterScore]) bestLetterScore = Si
-  }
+      }
     }
     bestLetterScores.set(duplicateLetter, bestLetterScore)
   }
