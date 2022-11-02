@@ -1,0 +1,151 @@
+<!doctype html>
+
+<meta charset="utf8"/>
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#598392" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2020%2020'%3E%3Ctext%20x='0'%20y='14'%3E🤔%3C/text%3E%3C/svg%3E" type="image/svg+xml" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="icon.png" />
+
+<script src="confetti.browser.min.js"></script>
+
+<link rel="stylesheet" href="style.css" />
+
+<title>WhatWord</title>
+
+<main>
+  <label id="event-label"></label>
+
+  <header>
+    <a href="#settings">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="32" height="32" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <line x1="4" y1="6" x2="20" y2="6"></line>
+        <line x1="4" y1="12" x2="20" y2="12"></line>
+        <line x1="4" y1="18" x2="20" y2="18"></line>
+      </svg>
+    </a>
+    <h1>WhatWord<span class="emoji">🤔</span></h1>
+    <div id="countdown" class="countdown">
+      <div class="meter">
+        <div class="bar"></div>
+      </div>
+      <div class="time"></div>
+    </div>
+  </header>
+
+  <label id="message"></label>
+
+  <div id="all-guesses"></div>
+
+  <div id="local-guesses-wrapper">
+    <div id="local-guesses">
+      <div id="local-00"></div>
+      <div id="local-01"></div>
+      <div id="local-02"></div>
+      <div id="local-03"></div>
+      <div id="local-04"></div>
+      <div id="local-10"></div>
+      <div id="local-11"></div>
+      <div id="local-12"></div>
+      <div id="local-13"></div>
+      <div id="local-14"></div>
+      <div id="local-20"></div>
+      <div id="local-21"></div>
+      <div id="local-22"></div>
+      <div id="local-23"></div>
+      <div id="local-24"></div>
+      <div id="local-30"></div>
+      <div id="local-31"></div>
+      <div id="local-32"></div>
+      <div id="local-33"></div>
+      <div id="local-34"></div>
+      <div id="local-40"></div>
+      <div id="local-41"></div>
+      <div id="local-42"></div>
+      <div id="local-43"></div>
+      <div id="local-44"></div>
+      <div id="local-50"></div>
+      <div id="local-51"></div>
+      <div id="local-52"></div>
+      <div id="local-53"></div>
+      <div id="local-54"></div>
+    </div>
+  </div>
+
+  <div id="keyboard">
+    <div class="keyboard-row">
+      <a href="#key" class="key" data-key="Q">Q</a>
+      <a href="#key" class="key" data-key="W">W</a>
+      <a href="#key" class="key" data-key="E">E</a>
+      <a href="#key" class="key" data-key="R">R</a>
+      <a href="#key" class="key" data-key="T">T</a>
+      <a href="#key" class="key" data-key="Y">Y</a>
+      <a href="#key" class="key" data-key="U">U</a>
+      <a href="#key" class="key" data-key="I">I</a>
+      <a href="#key" class="key" data-key="O">O</a>
+      <a href="#key" class="key" data-key="P">P</a>
+    </div>
+    <div class="keyboard-row">
+      <a href="#key" class="key" data-key="A">A</a>
+      <a href="#key" class="key" data-key="S">S</a>
+      <a href="#key" class="key" data-key="D">D</a>
+      <a href="#key" class="key" data-key="F">F</a>
+      <a href="#key" class="key" data-key="G">G</a>
+      <a href="#key" class="key" data-key="H">H</a>
+      <a href="#key" class="key" data-key="J">J</a>
+      <a href="#key" class="key" data-key="K">K</a>
+      <a href="#key" class="key" data-key="L">L</a>
+    </div>
+    <div class="keyboard-row">
+      <a href="#key" class="key" data-key="Z">Z</a>
+      <a href="#key" class="key" data-key="X">X</a>
+      <a href="#key" class="key" data-key="C">C</a>
+      <a href="#key" class="key" data-key="V">V</a>
+      <a href="#key" class="key" data-key="B">B</a>
+      <a href="#key" class="key" data-key="N">N</a>
+      <a href="#key" class="key" data-key="M">M</a>
+      <a href="#key" class="key" data-key="BACKSPACE">⌫</a>
+      <a href="#key" class="key" data-key="ENTER">⏎</a>
+    </div>
+  </div>
+
+</main>
+
+<div id="settings">
+  <div>
+    <div>
+      <h3>Player Name</h3>
+      This is how other players will see your name.
+      <input id="player-name" type="text" placeholder="Player Name" value="<%= player.name %>" />
+      <button id="suggest-name">Suggest Random Name</button>
+    </div>
+    <div>
+      <h3>Expert Mode</h3>
+        Each guess must use all letters found in earlier guesses.
+      </label>
+      <button id="expert-mode" class="toggle <%- player.expertMode ? "on" : "off" %>">Enable</button>
+    </div>
+    <div>
+      <button class="close">OK</button>
+    </div>
+  </div>
+</div>
+
+<div id="orientation-warning">
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-rotate-clockwise-2" width="36" height="36" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5"></path>
+      <line x1="5.63" y1="7.16" x2="5.63" y2="7.17"></line>
+      <line x1="4.06" y1="11" x2="4.06" y2="11.01"></line>
+      <line x1="4.63" y1="15.1" x2="4.63" y2="15.11"></line>
+      <line x1="7.16" y1="18.37" x2="7.16" y2="18.38"></line>
+      <line x1="11" y1="19.94" x2="11" y2="19.95"></line>
+    </svg>
+  </div>
+</div>
+
+
+<script>window.player = <%- JSON.stringify(player) %></script>
+<script type="module" src="client.mjs"></script>

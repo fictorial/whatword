@@ -1,0 +1,16 @@
+## production deployment?
+
+- fly.io?
+  - load balancer: can handle 1000 clients easily... up limits
+  - custom domain: cname or A records? google. how does that work with multiple regions?
+  - where do I set the secret for SECRET?
+  - where do I set NODE_ENV to production?
+
+- cloudflare
+  - not sure how to just launch a node.js app there
+
+- deno deploy
+  - rewrite in typescript which is probably not that hard
+
+- digital ocean vps?
+    - would like this just to work in various regions (fly)
