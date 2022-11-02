@@ -52,14 +52,16 @@ const headersJSON = {
 const randomElement = (a) => a[(Math.random() * a.length) | 0]
 
 const addClass = ($el, ...args) => $el.classList.add(...args)
-const rmClass = ($el, ...args) => $el.classList.remove(...args)
-const reAddClass = ($el, ...args) => rmClass($el, ...args) && addClass($el, ...args)
 const hasClass = ($el, cls) => $el.classList.contains(cls)
+const rmClass = ($el, ...args) => $el.classList.remove(...args)
+const reAddClass = ($el, ...args) => {
+  rmClass($el, ...args)
+  addClass($el, ...args)
+}
 
 async function animate($el, animationName) {
-  rmClass($el, animationName)
   return new Promise((resolve) => {
-    addClass($el, animationName)
+    reAddClass($el, animationName)
     $el.addEventListener("animationend", resolve, { once: true })
   })
 }
