@@ -17,9 +17,11 @@ while ! dokku enter $APP web cat $PENDING >/dev/null
 do
   sleep 1
 done
+EOF
 
 git push dokku $DEPLOY_BRANCH
 
+ssh whatword.wtf <<EOF
 perl -pi -e 's/keepalive_timeout\s+\d+/keepalive_timeout 120/' /home/dokku/$APP/nginx.conf
 
 service nginx reload
