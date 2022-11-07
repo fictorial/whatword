@@ -15,6 +15,7 @@ const shiftMatch = "s"
 const exactMatchWord = "eeeee"
 const gameDuration = ms(process.env.GAME_DURATION ?? "2 minutes")
 const intermissionDuration = ms(process.env.INTERMISSION_DURATION ?? "15 seconds")
+const upgradePendingPath = process.env.UPGRADE_PENDING_PATH ?? "/tmp/.upgrade-pending"
 
 let gameID
 let gameStartedAt
@@ -341,9 +342,6 @@ app.listen(process.env.PORT, (err) => {
   start()
 })
 
-const upgradePendingPath = process.env.UPGRADE_PENDING_PATH ?? "/tmp/.whatword-upgrade-pending"
-const upgradeReadyPath = process.env.UPGRADE_READY_PATH ?? "/tmp/.whatword-upgrade-ready"
-
 function checkUpgrade() {
   console.log("checking for upgrade", upgradePendingPath, fs.existsSync(upgradePendingPath))
 
@@ -351,8 +349,6 @@ function checkUpgrade() {
     console.warn("exiting since upgrade pending!")
 
     fs.unlinkSync(upgradePendingPath)
-    fs.writeFileSync(upgradeReadyPath, new Date())
-
     process.exit(0)
   }
 }

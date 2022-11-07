@@ -178,47 +178,21 @@ See what is happening with storage:
 
 ## Deployments
 
-We don't require zero-downtime upgrades though since clients remain connected
-for as long as possible, reconnecting with exponential backoff delays on each
-consecutive reconnection failure. Thus, if we simple push and restart
-immediately, we're OK.
-
-    remote# dokku checks:disable whatword
-
-The trick however is that we want to wait until the current game ends.
-To signal to WhatWord to _not_ start a new game:
-
-    remote# touch /tmp/.whatword-upgrade-pending
-
-WhatWord will check for this file and NOT start a new game. Instead, it will
-write file
-
-    /tmp/.whatword-upgrade-ready
-
-When you see this, the latest code can be pushed to the Dokku git remote
-and the temporary signal files can be removed:
-
-    remote# rm -f /tmp/.whatword-upgrade-ready /tmp/.whatword-upgrade-pending
-
-    local$ git push dokku main  # or main perhaps
-
-This can of course be wrapped in a NPM package.json script if desired:
-
-    local$ curl https://whatword.wtf/version
-
     local$ npm run deploy
 
+This will wait until the current game ends, quit the server, deploy, and restart.
+
+### Checks
+
+Dokku has [checks](https://dokku.com/docs/deployment/zero-downtime-deploys) but we do not
+need these since our clients reconnect gracefully and we have long-lived connections that
+will not die so there's no sense in leaving the previous container up.
+
+    remote# dokku checks:disable whatword web
+
+### Current Version
+
     local$ curl https://whatword.wtf/version
-
-Put this in `package.json` in the `scripts` section:
-
-```js
-"deploy-init": "ssh whatword.wtf -- touch /tmp/.whatword-upgrade-pending",
-"deploy-wait": "ssh whatword.wtf -- \"bash -c 'while [ ! -f /tmp/.whatword-upgrade-ready ]; do sleep 1; done'\"",
-"deploy-push": "git push dokku main",
-"deploy-deinit": "ssh whatword.wtf -- rm -f /tmp/.whatword-upgrade-ready /tmp/.whatword-upgrade-pending",
-"deploy": "npm run deploy-deinit && npm run deploy-init && npm run deploy-wait && npm run deploy-push"
-```
 
 ### Github Actions (unused)
 
@@ -258,6 +232,22 @@ jobs:
 
 ## Tail Logs
 
+### Configuring DEBUG logging
+
+Use this to discover production-only issues:
+
+    remote# dokku config:set whatword DEBUG=whatword
+
+Now view debug logs:
+
+    local$ npm run logs
+
+or:
+
     remote# dokku logs whatword -t
+
+When done:
+
+    remote# dokku config:unset whatword DEBUG
 
 See https://dokku.com/docs/deployment/logs/
