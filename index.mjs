@@ -345,9 +345,14 @@ const upgradePendingPath = process.env.UPGRADE_PENDING_PATH ?? "/tmp/.whatword-u
 const upgradeReadyPath = process.env.UPGRADE_READY_PATH ?? "/tmp/.whatword-upgrade-ready"
 
 function checkUpgrade() {
+  console.log("checking for upgrade", upgradePendingPath, fs.existsSync(upgradePendingPath))
+
   if (fs.existsSync(upgradePendingPath)) {
+    console.warn("exiting since upgrade pending!")
+
     fs.unlinkSync(upgradePendingPath)
     fs.writeFileSync(upgradeReadyPath, new Date())
+
     process.exit(0)
   }
 }

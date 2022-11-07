@@ -1,0 +1,12 @@
+settimeout is throttled... need to perhaps to note visibilitychange (leave) vs
+return and if the delta is too big, simply reload the page
+
+The `#settings` seems to stick to the URL... that shouldn't happen.
+
+Need a flash or something when the game starts.. Get Ready is not enough.
+
+disable DEBUG in backend config
+
+if you are the only player and get the word, restart faster...
+
+make the status text be a bubble off the floating emoji?
