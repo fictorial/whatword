@@ -26,6 +26,8 @@ let wordIndex = 0
 let guessedWordCount = 0
 let clients = []
 
+let isProduction = process.env.NODE_ENV === "production"
+
 const app = express()
 app.set("view engine", "ejs")
 app.use(express.static("public"))
@@ -45,8 +47,8 @@ app.use(function decodeOrCreatePlayer(req, res, next) {
 function writeCookie(req, res) {
   res.cookie(cookieName, JSON.stringify(res.locals.player), {
     sameSite: "lax",
-    secure: req.secure,
-    signed: !!process.env.SECRET,
+    secure: isProduction,
+    signed: true,
     maxAge: ms("1 year"),
     httpOnly: true,
   })
