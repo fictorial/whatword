@@ -289,6 +289,16 @@ app.get("/names", (_, res) => {
   res.send({ name: makePlayerName() })
 })
 
+app.get("/ping", (_, res) => {
+  const message = "pong"
+  res.writeHead(200, {
+    "Content-Type": "text/plain",
+    "Content-Length": message.length,
+  })
+  res.write(message)
+  res.end()
+})
+
 app.use((err, _, res, next) => {
   if (err instanceof GameError) {
     console.error(
