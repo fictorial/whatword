@@ -642,7 +642,7 @@ function connectEventSource() {
       fadeOutDown($keyboard),
     ])
 
-    if (++reconnectionAttempts === 5) {
+    if (++reconnectionAttempts === 7) {
       console.error("giving up reconnecting...reload page and/or try again later.")
       showMessage("")
       showEvent("Failed to connect to server. Please try later.", false)
