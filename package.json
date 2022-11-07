@@ -8,9 +8,11 @@
     "start": "node index.mjs",
     "deploy-init": "ssh whatword.wtf -- touch /tmp/.whatword-upgrade-pending",
     "deploy-deinit": "ssh whatword.wtf -- rm -f /tmp/.whatword-upgrade-ready /tmp/.whatword-upgrade-pending",
+    "deploy-patch-nginx": "ssh whatword.wtf -- sed -i 's/keepalive_timeout   70/keepalive_timeout   120/' /home/dokku/whatword/nginx.conf",
+    "deploy-reload-nginx": "ssh whatword.wtf -- service nginx reload",
     "deploy-wait": "ssh whatword.wtf -- \"bash -c 'while [ ! -f /tmp/.whatword-upgrade-ready ]; do sleep 1; done'\"",
     "deploy-push": "git push dokku main",
-    "deploy": "npm run deploy-deinit && npm run deploy-init && npm run deploy-wait && npm run deploy-push"
+    "deploy": "npm run deploy-deinit && npm run deploy-init && npm run deploy-wait && npm run deploy-push && npm run deploy-patch-nginx && npm run deploy-reload-nginx"
   },
   "sourceType": "module",
   "private": true,
