@@ -327,7 +327,7 @@ app.use((err, _, res, next) => {
   next()
 })
 
-app.listen(process.env.PORT, process.env.HOST, (err) => {
+app.listen(process.env.PORT, (err) => {
   if (err) throw err
 
   debug("words:", words.length)

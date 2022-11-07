@@ -5,7 +5,12 @@
   "main": "index.mjs",
   "scripts": {
     "dev": "DEBUG=whatword PORT=3000 HOST=0.0.0.0 SECRET=foobar npx nodemon index.mjs -e js,mjs,json,ejs",
-    "start": "node index.mjs"
+    "start": "node index.mjs",
+    "deploy-init": "ssh whatword.wtf touch /tmp/.whatword-upgrade-pending",
+    "deploy-deinit": "ssh whatword.wtf rm -f /tmp/.whatword-upgrade-ready /tmp/.whatword-upgrade-pending",
+    "deploy-wait": "ssh whatword.wtf \"bash -c 'while [ ! -f /tmp/.whatword-upgrade-ready ]; do sleep 1; done'\"",
+    "deploy-push": "git push dokku main",
+    "deploy": "npm run deploy-deinit && npm run deploy-init && npm run deploy-wait && npm run deploy-push"
   },
   "sourceType": "module",
   "private": true,
