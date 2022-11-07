@@ -299,6 +299,16 @@ app.get("/ping", (_, res) => {
   res.end()
 })
 
+app.get("/version", (_, res) => {
+  const packageInfo = JSON.parse(fs.readFileSync("package.json"), { encoding: "utf8" })
+  res.writeHead(200, {
+    "Content-Type": "text/plain",
+    "Content-Length": packageInfo.version.length,
+  })
+  res.write(packageInfo.version)
+  res.end()
+})
+
 app.use((err, _, res, next) => {
   if (err instanceof GameError) {
     console.error(
