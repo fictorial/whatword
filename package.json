@@ -4,13 +4,16 @@
   "description": "word game",
   "main": "index.mjs",
   "scripts": {
-    "dev": "DEBUG=whatword PORT=3000 HOST=0.0.0.0 SECRET=foobar nodemon index.mjs -e js,mjs,json,ejs",
+    "dev": "DEBUG=whatword PORT=3000 HOST=0.0.0.0 SECRET=foobar npx nodemon index.mjs -e js,mjs,json,ejs",
     "start": "node index.mjs"
   },
   "sourceType": "module",
   "private": true,
   "author": "Brian Hammond <fictorial>",
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=17"
+  },
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "debug": "^4.3.4",
