@@ -146,6 +146,7 @@ const sseHeaders = {
   Connection: "keep-alive",
   "Content-Type": "text/event-stream",
   "Cache-Control": "no-cache",
+  "X-Accel-Buffering": "no",
 }
 
 app.get("/events", (req, res) => {
