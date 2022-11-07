@@ -611,11 +611,11 @@ function closeEventSource() {
 }
 
 function connectEventSource() {
-  console.info("connecting to event source...")
+  console.debug("connecting to event source...")
   eventSource = new EventSource("/events")
 
   eventSource.onopen = async (event) => {
-    console.info("connected to event source...")
+    console.debug("connected to event source...")
 
     if ($eventLabel.textContent === reconnectingMessage) hideEventLabel()
 
