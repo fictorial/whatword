@@ -214,6 +214,8 @@ function resetState() {
 }
 
 function start() {
+  checkUpgrade()
+
   resetState()
 
   debug("start game", gameID, gameStartedAt)
@@ -338,3 +340,14 @@ app.listen(process.env.PORT, (err) => {
 
   start()
 })
+
+const upgradePendingPath = process.env.UPGRADE_PENDING_PATH ?? "/tmp/.whatword-upgrade-pending"
+const upgradeReadyPath = process.env.UPGRADE_READY_PATH ?? "/tmp/.whatword-upgrade-ready"
+
+function checkUpgrade() {
+  if (fs.fileExistsSync(upgradePendingPath)) {
+    fs.unlinkSync(upgradePendingPath)
+    fs.writeFileSync(upgradeReadyPath, new Date())
+    process.exit(0)
+  }
+}
