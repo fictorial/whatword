@@ -26,22 +26,20 @@ EOF
 git push dokku $DEPLOY_BRANCH
 
 ssh whatword.wtf <<EOF
-set -e
-echo "updating keepalive_timeout"
 perl -pi -e 's/keepalive_timeout\s+\d+/keepalive_timeout 120/' $NGINX_CONF
 
-echo "updating NGINX config for rate limiting: $NGINX_CONF"
-echo 'limit_req_zone \$binary_remote_addr zone=limitreqsbyaddr:20m rate=1r/s;' >/tmp/.conf
-echo 'limit_req_status 429;' >>/tmp/.conf
-echo '' >>/tmp/.conf
-cat $NGINX_CONF >>/tmp/.conf
-mv /tmp/.conf $NGINX_CONF
+# TODO this seems correct (conf validates) but throwing an error for some reason:
+#   nginx: [emerg] zero size shared memory zone "limitreqsbyaddr"
+#
+# echo 'limit_req_zone \$binary_remote_addr zone=limitreqsbyaddr:20m rate=1r/s;' >/tmp/.conf
+# echo 'limit_req_status 429;' >>/tmp/.conf
+# echo '' >>/tmp/.conf
+# cat $NGINX_CONF >>/tmp/.conf
+# mv /tmp/.conf $NGINX_CONF
+#
+# echo 'location /guesses { limit_req zone=limitreqsbyaddr; }' >$NGINX_RATE_LIMIT_CONF
+# echo 'location /settings { limit_req zone=limitreqsbyaddr; }' >>$NGINX_RATE_LIMIT_CONF
 
-echo "adding rate limit conf: $NGINX_RATE_LIMIT_CONF"
-echo 'location /guesses { limit_req zone=limitreqsbyaddr; }' >$NGINX_RATE_LIMIT_CONF
-echo 'location /settings { limit_req zone=limitreqsbyaddr; }' >>$NGINX_RATE_LIMIT_CONF
-
-echo "reloading nginx"
 service nginx reload
 EOF
 

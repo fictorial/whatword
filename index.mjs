@@ -5,6 +5,7 @@ import ms from "ms"
 import { nanoid } from "nanoid"
 import LRU from "lru-cache"
 import _debug from "debug"
+import rateLimit from "express-rate-limit"
 
 const debug = _debug("whatword")
 const words = JSON.parse(fs.readFileSync("etc/words.json"))
@@ -63,59 +64,63 @@ class GameError extends Error {
   }
 }
 
-app.post("/guesses", function onGuessMade(req, res) {
-  if (!gameID) throw new GameError(`No game is active at the moment`)
+app.post(
+  "/guesses",
+  rateLimit({ window: 1000, max: 1, useStandardHeaders: false }),
+  function onGuessMade(req, res) {
+    if (!gameID) throw new GameError(`No game is active at the moment`)
 
-  const guess = (req.body.guess || "").trim()
-  if (!guess.match(/^[A-Z]{5}$/)) throw new GameError(`invalid format for guess`)
-  if (words.indexOf(guess) === -1) throw new GameError(`${guess} is not in the word list`)
+    const guess = (req.body.guess || "").trim()
+    if (!guess.match(/^[A-Z]{5}$/)) throw new GameError(`invalid format for guess`)
+    if (words.indexOf(guess) === -1) throw new GameError(`${guess} is not in the word list`)
 
-  const player = res.locals.player
+    const player = res.locals.player
 
-  const selfGuesses = guessesPerPlayer[player.id] ?? []
-  if (selfGuesses.length === 6) throw new GameError(`You are out of guesses for this game`)
+    const selfGuesses = guessesPerPlayer[player.id] ?? []
+    if (selfGuesses.length === 6) throw new GameError(`You are out of guesses for this game`)
 
-  if (player.expertMode) checkExpertModeSatisfied(guess, selfGuesses)
+    if (player.expertMode) checkExpertModeSatisfied(guess, selfGuesses)
 
-  let score = [noMatch, noMatch, noMatch, noMatch, noMatch]
-  let wordIndex = structuredClone(reverseIndex)
+    let score = [noMatch, noMatch, noMatch, noMatch, noMatch]
+    let wordIndex = structuredClone(reverseIndex)
 
-  // First pass is for exact matches. Follows that other really
-  // popular word game of 2022 ;)
+    // First pass is for exact matches. Follows that other really
+    // popular word game of 2022 ;)
 
-  for (let i = 0; i < 5; ++i) {
-    const Gi = guess[i]
-    const Si = secretWord[i]
-    if (Gi === Si) {
-      score[i] = exactMatch
-      wordIndex[Gi].splice(wordIndex[Gi].indexOf(i), 1)
+    for (let i = 0; i < 5; ++i) {
+      const Gi = guess[i]
+      const Si = secretWord[i]
+      if (Gi === Si) {
+        score[i] = exactMatch
+        wordIndex[Gi].splice(wordIndex[Gi].indexOf(i), 1)
+      }
     }
-  }
 
-  for (let i = 0; i < 5; ++i) {
-    const Gi = guess[i]
-    if (score[i] !== exactMatch && wordIndex[Gi]?.length > 0) {
-      score[i] = shiftMatch
-      wordIndex[Gi].splice(wordIndex[Gi].indexOf(i), 1)
+    for (let i = 0; i < 5; ++i) {
+      const Gi = guess[i]
+      if (score[i] !== exactMatch && wordIndex[Gi]?.length > 0) {
+        score[i] = shiftMatch
+        wordIndex[Gi].splice(wordIndex[Gi].indexOf(i), 1)
+      }
     }
+
+    score = score.join("")
+
+    selfGuesses.push({ guess, score })
+    guessesPerPlayer[player.id] = selfGuesses
+
+    broadcast("guess", {
+      gameID,
+      player,
+      score,
+      guessNumber: selfGuesses.length - 1,
+    })
+
+    if (score === exactMatchWord) ++guessedWordCount
+
+    res.send({ score })
   }
-
-  score = score.join("")
-
-  selfGuesses.push({ guess, score })
-  guessesPerPlayer[player.id] = selfGuesses
-
-  broadcast("guess", {
-    gameID,
-    player,
-    score,
-    guessNumber: selfGuesses.length - 1,
-  })
-
-  if (score === exactMatchWord) ++guessedWordCount
-
-  res.send({ score })
-})
+)
 
 // In expert mode, the player has to use in the current guess the letters that
 // were found in the secret word in any previous guess (of the same game).
@@ -253,23 +258,27 @@ function endCurrentGame() {
   setTimeout(start, intermissionDuration)
 }
 
-app.post("/settings", (req, res) => {
-  let dirty = false
+app.post(
+  "/settings",
+  rateLimit({ window: 1000, max: 1, useStandardHeaders: false }),
+  function onUpdateSettings(req, res) {
+    let dirty = false
 
-  const name = (req.body.name || "").trim().slice(0, 32)
-  if (name.length >= 3) {
-    dirty = true
-    res.locals.player.name = name
-    broadcast("nameChange", { player: res.locals.player, name })
+    const name = (req.body.name || "").trim().slice(0, 32)
+    if (name.length >= 3) {
+      dirty = true
+      res.locals.player.name = name
+      broadcast("nameChange", { player: res.locals.player, name })
+    }
+
+    const enableExpertMode = req.body.expertMode === true
+    dirty = dirty || enableExpertMode !== res.locals.player.expertMode
+    res.locals.player.expertMode = enableExpertMode
+
+    if (dirty) writeCookie(req, res)
+    res.send({})
   }
-
-  const enableExpertMode = req.body.expertMode === true
-  dirty = dirty || enableExpertMode !== res.locals.player.expertMode
-  res.locals.player.expertMode = enableExpertMode
-
-  if (dirty) writeCookie(req, res)
-  res.send({})
-})
+)
 
 // Player names are non-unique but try not to repeat recently used names.
 
@@ -291,9 +300,13 @@ function makePlayerName() {
   return generateUsername()
 }
 
-app.get("/names", (_, res) => {
-  res.send({ name: makePlayerName() })
-})
+app.get(
+  "/names",
+  rateLimit({ window: 1000, max: 4, useStandardHeaders: false }),
+  function onSuggestName(_, res) {
+    res.send({ name: makePlayerName() })
+  }
+)
 
 app.get("/ping", (_, res) => {
   const message = "pong"
