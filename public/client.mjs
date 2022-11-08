@@ -175,7 +175,7 @@ async function commitSettings() {
   } else {
     const expertMode = window.player.expertMode
     await postJSON("/settings", { name, expertMode })
-    closeSettings()
+    await closeSettings()
   }
 }
 
@@ -186,7 +186,12 @@ async function closeSettings() {
     fadeInUp($keyboard),
     fadeOut($settings),
   ])
+
   $settings.style.display = "none"
+
+  const $el = document.querySelector(":focus")
+  if ($el) $el.blur()
+  document.body.focus()
 }
 
 $settingsClose.addEventListener("click", async function (event) {
