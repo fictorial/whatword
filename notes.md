@@ -259,6 +259,12 @@ One request per second per client should suffice.
 
 We could do this at the app level but it's better at the NGINX level.
 
+Dokku does not expose this: https://github.com/dokku/dokku/issues/5318
+
+Update the NGINX config at:
+
+    /home/dokku/whatword/nginx.conf
+
 Add a NGINX config file at:
 
     /home/dokku/whatword/nginx.conf.d/rate_limit.conf
