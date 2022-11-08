@@ -650,3 +650,13 @@ function connectEventSource() {
 }
 
 connectEventSource()
+
+// Given that setTimeout etc are throttled, it's easiest to just resync on return.
+// It's quite lightweight.
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    console.debug("reloading on returning to page from other app")
+    location.reload()
+  }
+})
