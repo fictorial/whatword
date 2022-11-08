@@ -467,7 +467,7 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
 
   gameID = null
 
-  await Promise.all([fadeOutDown($localGuesses), fadeOutDown($keyboard)])
+  await Promise.all([fadeOutDown($localGuessesWrapper), fadeOutDown($keyboard)])
 
   // HELLO => H E L L O
   showEvent(secretWord.replace(/./g, "$& ").slice(0, -1), false)
@@ -490,7 +490,7 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
         break
       case 3000:
         showMessage("Get Ready!")
-        await fadeInUp($localGuesses)
+        await fadeInUp($localGuessesWrapper)
         break
       case 1000:
         await fadeInUp($keyboard)
