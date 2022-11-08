@@ -4,7 +4,6 @@ const $$ = document.querySelectorAll.bind(document)
 const $showSettings = $('a[href="#settings"]')
 const $settings = $("#settings")
 const $settingsForm = $("#settings > div")
-const $settingsClose = $("#settings button.close")
 const $expertToggle = $("#settings #expert-mode")
 const $playerNameInput = $("#settings #player-name")
 const $suggestName = $("#settings #suggest-name")
@@ -195,20 +194,14 @@ async function closeSettings() {
   document.body.focus()
 }
 
-$settingsClose.addEventListener("click", async function (event) {
-  event.stopPropagation()
-  event.preventDefault()
-
-  await commitSettings()
-})
-
 // The wrapper/backdrop...
+
 $settings.addEventListener("click", function (event) {
   if (event.target === $settings) {
     event.stopPropagation()
     event.preventDefault()
 
-    closeSettings() // no commit
+    commitSettings()
   }
 })
 
@@ -433,7 +426,7 @@ async function onGameStart({
   playerCount,
   selfGuesses,
 }) {
-  if ($settings.style.display !== "none") closeSettings()
+  //if ($settings.style.display === "flex") closeSettings()
 
   rmClass(document.body, "game-off")
 
@@ -473,9 +466,11 @@ async function onGameStart({
 }
 
 async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedWordCount }) {
-  if ($settings.style.display !== "none") closeSettings()
+  //if ($settings.style.display === "flex") closeSettings()
 
   showMessage("Game Over")
+
+  addClass(document.body, "game-off")
 
   gameID = null
 
@@ -483,12 +478,6 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
 
   // HELLO => H E L L O (can do this with CSS too of course)
   showEvent(secretWord.replace(/./g, "$& ").slice(0, -1), false)
-
-  if (interGameDelay < 8000) {
-    hideEventLabel()
-    rmScoreDecorations()
-    clearPlayerGuessScores()
-  }
 
   // Assume it takes 500ms for the message to get to us from the server.
   const timeRemaining = 1000 * Math.round((interGameDelay - 500) / 1000)
@@ -505,13 +494,9 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
         break
       case 3:
         showMessage("Get Ready!")
-        fadeInUp($localGuessesWrapper)
-        fadeInUp($keyboard)
         break
     }
   })
-
-  addClass(document.body, "game-off")
 }
 
 async function showGuessedWordCountMessage(guessedWordCount) {

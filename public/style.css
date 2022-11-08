@@ -8,8 +8,8 @@
   --exact-match: #E233E8;
   --exact-match-text: white;
 
-  --shift-match: #6D7DBD;
-  --shift-match-text: white;
+  --shift-match: #DFAB31;
+  --shift-match-text: #0202028f;
 }
 
 @keyframes fade-in {
@@ -209,21 +209,21 @@
 body {
   height: 100svh;
   text-rendering: optimizeLegibility;
-  background-image: linear-gradient(180deg, #371955, #4d1d68, #674ba2);
+  background-image: linear-gradient(180deg, #1e1955, #202448, #674ba2);
   color: #eff6e0;
   overflow: hidden;
-  transition: background-position 1.5s;
+  transition: background-position 1.5s, box-shadow 1s;
 }
 
 /* doesn't really work on iphones with the notch, etc. */
 
 @media(hover:hover) and (pointer:fine) {
   body {
-    box-shadow: inset 0 0 2vh 0 #171010;
+    box-shadow: inset 0 0 3vmin 0 #5bcdd5;
   }
 
   body.game-off {
-    box-shadow: inset 0 0 2vh 0 #171010;
+    box-shadow: inset 0 0 10vmax 0 #00000072;
   }
 }
 
@@ -238,14 +238,12 @@ button {
   font-size: inherit;
   background: #d9a630;
   color: rgba(40, 40, 40, 0.85);
-  /*! border: none; */
   outline: none;
   border-radius: 0.5vh;
   font-weight: bold;
   cursor: pointer;
   border: 1px solid transparent;
   transition: transform 0.1s, border-color 0.1s, box-shadow 0.1s;
-  /*! letter-spacing: 0.2ch; */
 }
 
 input {
@@ -301,7 +299,7 @@ main {
 .exact-match {
   background-color: var(--exact-match) !important;
   color: var(--exact-match-text) !important;
-  
+
   box-shadow:
     inset 0 0 5px #fff,
     inset 2px 0 1vmin #f0f,
@@ -429,23 +427,16 @@ header a[href="#settings"] {
 }
 
 #settings>div {
-  padding: 4vh 3vh;
-  padding-bottom: 2vh;
+  padding: 3vh 2vh;
   background: rgba(49, 49, 49, 0.9);
-  background: #441d5f;
+  background: #2f2a57;
   box-shadow: 0 2vh 2vh 0 rgba(0, 0, 0, 0.25);
   border-radius: 0.5vh;
-  /*! border: 1px solid rgb(50, 21, 76); */
-  gap: 2vh;
+  gap: 1vh;
 }
 
 #settings>div>div {
-  padding: 2vh;
-}
-
-#settings>div div:last-child button:last-child {
-  background: rgb(55, 94, 108);
-  color: #cacfbd;
+  padding: 1vh;
 }
 
 #settings .color-help {
@@ -462,6 +453,23 @@ header a[href="#settings"] {
   align-items: center;
   font-size: 200%;
   border-radius: 0.5vh;
+}
+
+#settings .attribution {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.7;
+}
+
+#settings .attribution a {
+  display: block;
+  padding: 0.5ch;
+}
+
+#settings button.close {
+  color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 @media(max-width: 500px) {
@@ -587,6 +595,7 @@ header a[href="#settings"] {
   align-items: center;
   gap: 1ch;
   opacity: 0;
+  margin-bottom: 1ch;
 }
 
 .keyboard-row {

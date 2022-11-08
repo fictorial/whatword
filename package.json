@@ -4,7 +4,7 @@
   "description": "A guess-the-secret word game played simultaneously over the web in the style of a popular word game from 2022",
   "main": "index.mjs",
   "scripts": {
-    "dev": "DEBUG=whatword PORT=3000 HOST=0.0.0.0 SECRET=foobar GAME_DURATION='20 seconds' npx nodemon index.mjs -e js,mjs,json,ejs",
+    "dev": "DEBUG=whatword PORT=3000 HOST=0.0.0.0 SECRET=foobar GAME_DURATION='30 seconds' npx nodemon index.mjs -e js,mjs,json,ejs",
     "start": "node index.mjs",
     "deploy": "./deploy.sh",
     "logs": "ssh whatword.wtf -- dokku logs whatword -t"
