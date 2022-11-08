@@ -30,6 +30,10 @@ let clients = []
 
 let isProduction = process.env.NODE_ENV === "production"
 
+const rateErrorObject = {
+  error: "too many requests",
+}
+
 const app = express()
 app.set("view engine", "ejs")
 app.set("trust proxy", isProduction)
@@ -67,7 +71,7 @@ class GameError extends Error {
 
 app.post(
   "/guesses",
-  rateLimit({ windowMs: 1000, max: 1, standardHeaders: false }),
+  rateLimit({ windowMs: 1000, max: 1, standardHeaders: false, message: rateErrorObject }),
   function onGuessMade(req, res) {
     if (!gameID) throw new GameError(`No game is active at the moment`)
 
@@ -261,7 +265,7 @@ function endCurrentGame() {
 
 app.post(
   "/settings",
-  rateLimit({ windowMs: 1000, max: 1, standardHeaders: false }),
+  rateLimit({ windowMs: 1000, max: 1, standardHeaders: false, message: rateErrorObject }),
   function onUpdateSettings(req, res) {
     let dirty = false
 
@@ -303,7 +307,7 @@ function makePlayerName() {
 
 app.get(
   "/names",
-  rateLimit({ windowMs: 1000, max: 4, standardHeaders: false }),
+  rateLimit({ windowMs: 1000, max: 4, standardHeaders: false, message: rateErrorObject }),
   function onSuggestName(_, res) {
     res.send({ name: makePlayerName() })
   }
