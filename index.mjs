@@ -66,7 +66,7 @@ class GameError extends Error {
 
 app.post(
   "/guesses",
-  rateLimit({ window: 1000, max: 1, useStandardHeaders: false }),
+  rateLimit({ window: 1000, max: 1, standardHeaders: false }),
   function onGuessMade(req, res) {
     if (!gameID) throw new GameError(`No game is active at the moment`)
 
@@ -260,7 +260,7 @@ function endCurrentGame() {
 
 app.post(
   "/settings",
-  rateLimit({ window: 1000, max: 1, useStandardHeaders: false }),
+  rateLimit({ window: 1000, max: 1, standardHeaders: false }),
   function onUpdateSettings(req, res) {
     let dirty = false
 
@@ -302,7 +302,7 @@ function makePlayerName() {
 
 app.get(
   "/names",
-  rateLimit({ window: 1000, max: 4, useStandardHeaders: false }),
+  rateLimit({ window: 1000, max: 4, standardHeaders: false }),
   function onSuggestName(_, res) {
     res.send({ name: makePlayerName() })
   }
