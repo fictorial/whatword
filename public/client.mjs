@@ -441,15 +441,15 @@ async function onGameStart({
   localPlayerGuessedWord = false
   localGuessLetters = []
 
-  showPlayerCount(playerCount) // no await
+  showPlayerCount(playerCount)
   rmScoreDecorations()
 
   // Assume it takes 500ms for the message to get to us from the server.
   startCountdownTimer(1000 * Math.round((timeRemaining - 500) / 1000), gameDuration)
   clearLocalGuessLetters()
 
-  showMessage(gameID ? "Start guessing!" : "Waiting for next game to start...︎", false) // no await
-  if ($eventLabel.textContent) hideEventLabel() // no await
+  showMessage(gameID ? "Start guessing!" : "Waiting for next game to start...︎", false)
+  if ($eventLabel.textContent) hideEventLabel()
 
   // `selfGuesses` is when a player joins a game already in progress.
   // E.g. they reload the page after making a number of guesses.
@@ -458,7 +458,7 @@ async function onGameStart({
   localGuessNumber = selfGuesses.length
 
   selfGuesses.forEach(async ({ guess, score }, guessNumber) => {
-    onLocalPlayerGuessScored(score, guess, guessNumber) // no await
+    onLocalPlayerGuessScored(score, guess, guessNumber)
 
     for (let letterNumber = 0; letterNumber < 5; ++letterNumber)
       getLocalGuessLetterElement(guessNumber, letterNumber).textContent = guess.charAt(letterNumber)
@@ -474,7 +474,7 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
 
   await Promise.all([fadeOutDown($localGuessesWrapper), fadeOutDown($keyboard)])
 
-  // HELLO => H E L L O
+  // HELLO => H E L L O (can do this with CSS too of course)
   showEvent(secretWord.replace(/./g, "$& ").slice(0, -1), false)
 
   if (interGameDelay < 8000) {
@@ -486,18 +486,17 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
   // Assume it takes 500ms for the message to get to us from the server.
   const timeRemaining = 1000 * Math.round((interGameDelay - 500) / 1000)
 
-  startCountdownTimer(timeRemaining, interGameDelay, async (remainingTime) => {
-    // no await here and below:
-    switch (remainingTime) {
-      case 10000:
+  startCountdownTimer(timeRemaining, interGameDelay, (remainingTime) => {
+    switch (Math.floor(remainingTime / 1000)) {
+      case 10:
         showGuessedWordCountMessage(guessedWordCount)
         break
-      case 8000:
+      case 8:
         hideEventLabel()
         rmScoreDecorations()
         clearPlayerGuessScores()
         break
-      case 3000:
+      case 3:
         showMessage("Get Ready!")
         fadeInUp($localGuessesWrapper)
         fadeInUp($keyboard)
@@ -581,12 +580,11 @@ function startCountdownTimer(remainingTime, totalTime, hook) {
   $countdownBar.style.width = `100%`
 
   const updateTimeRemaining = () => {
-    remainingTime = parseInt(Math.round(Math.max(remainingTime - 1000, 0)))
-    $countdownBar.style.width = `${(100 * remainingTime) / totalTime}%`
+    remainingTime = Math.max(0, remainingTime - 1000)
+    $countdownBar.style.width = `${100 * (remainingTime / totalTime)}%`
     hook?.(remainingTime)
     clearTimeout(countdownTimeout)
-    if (remainingTime > 0)
-      countdownTimeout = setTimeout(updateTimeRemaining, Math.min(remainingTime, 1000))
+    if (remainingTime > 0) countdownTimeout = setTimeout(updateTimeRemaining, 1000)
   }
 
   updateTimeRemaining()
