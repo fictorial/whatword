@@ -9,6 +9,8 @@
 PENDING=/tmp/.upgrade-pending
 APP=whatword
 DEPLOY_BRANCH=main
+NGINX_CONF=/home/dokku/$APP/nginx.conf
+NGINX_RATE_LIMIT_CONF=/home/dokku/$APP/nginx.conf.d/rate_limit.conf
 
 ssh whatword.wtf <<EOF
 dokku enter $APP web touch $PENDING
@@ -18,18 +20,13 @@ do
   sleep 1
 done
 
-# This will not validate on push since we don't have the limit_req_zone in place yet.
-# That has to come after deployment.
-
-rm /home/dokku/$APP/nginx.conf.d/rate_limit.conf
+rm -f $NGINX_RATE_LIMIT_CONF
 EOF
 
 git push dokku $DEPLOY_BRANCH
 
-NGINX_CONF=/home/dokku/$APP/nginx.conf
-NGINX_RATE_LIMIT_CONF=/home/dokku/$APP/nginx.conf.d/rate_limit.conf
-
 ssh whatword.wtf <<EOF
+set -e
 echo "updating keepalive_timeout"
 perl -pi -e 's/keepalive_timeout\s+\d+/keepalive_timeout 120/' $NGINX_CONF
 
