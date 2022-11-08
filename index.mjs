@@ -31,7 +31,7 @@ let clients = []
 let isProduction = process.env.NODE_ENV === "production"
 
 const rateErrorObject = {
-  error: "too many requests",
+  error: "That's a bit too quick!",
 }
 
 const app = express()
