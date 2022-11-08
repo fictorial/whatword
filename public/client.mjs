@@ -601,10 +601,6 @@ const eventSourceHandlers = {
 }
 
 let eventSource
-let reconnectionAttempts = 0
-let reconnectTimeout
-
-const reconnectingMessage = "Reconnecting..."
 
 function closeEventSource() {
   eventSource.close()
@@ -617,8 +613,6 @@ function connectEventSource() {
   eventSource.onopen = async (event) => {
     console.debug("connected to event source...")
 
-    if ($eventLabel.textContent === reconnectingMessage) hideEventLabel()
-
     await Promise.all([
       fadeInUp($localGuessesWrapper),
       fadeInDown($countdownWrapper),
@@ -626,9 +620,6 @@ function connectEventSource() {
     ])
 
     window.addEventListener("beforeunload", closeEventSource)
-
-    clearTimeout(reconnectTimeout)
-    reconnectionAttempts = 0
   }
 
   eventSource.onerror = async (event) => {
@@ -642,19 +633,10 @@ function connectEventSource() {
       fadeOutDown($keyboard),
     ])
 
-    if (++reconnectionAttempts === 7) {
-      console.error("giving up reconnecting...reload page and/or try again later.")
-      showMessage("")
-      showEvent("Failed to connect to server. Please try later.", false)
-    } else {
-      if (reconnectionAttempts > 1) showEvent(reconnectingMessage, false)
-
-      const backoffDelay = 1000 * Math.pow(2, reconnectionAttempts - 1)
-      console.debug("backoff", backoffDelay)
-
-      clearTimeout(reconnectTimeout)
-      reconnectTimeout = setTimeout(connectEventSource, backoffDelay)
-    }
+    setTimeout(async () => {
+      await showEvent("Reconnecting... 🙃", false)
+      location.reload()
+    }, 500 + 800 * Math.random())
   }
 
   eventSource.onmessage = (event) => {
