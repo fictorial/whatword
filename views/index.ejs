@@ -114,6 +114,21 @@
 <div id="settings">
   <div>
     <div>
+      <h3>How to Play</h3>
+      <div class="color-help">
+        <div class="swatch no-match">W</div>
+        <label>Letter not found in secret word</label>
+      </div>
+      <div class="color-help">
+        <div class="swatch shift-match">T</div>
+        <label>Letter found in a different position</label>
+      </div>
+      <div class="color-help">
+        <div class="swatch exact-match">F</div>
+        <label>Letter found in correct position</label>
+      </div>
+    </div>
+    <div>
       <h3>Player Name</h3>
       This is how other players will see your name.
       <input id="player-name" type="text" placeholder="Player Name" value="<%= player.name %>" />

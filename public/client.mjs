@@ -184,12 +184,9 @@ async function commitSettings() {
 }
 
 async function closeSettings() {
-  await Promise.all([
-    fadeOutDown($settingsForm),
-    fadeInUp($localGuessesWrapper),
-    fadeInUp($keyboard),
-    fadeOut($settings),
-  ])
+  const anims = [fadeOutDown($settingsForm), fadeOut($settings)]
+  if (gameID) anims.push(fadeInUp($localGuessesWrapper), fadeInUp($keyboard))
+  await Promise.all(anims)
 
   $settings.style.display = "none"
 
@@ -205,6 +202,7 @@ $settingsClose.addEventListener("click", async function (event) {
   await commitSettings()
 })
 
+// The wrapper/backdrop...
 $settings.addEventListener("click", function (event) {
   if (event.target === $settings) {
     event.stopPropagation()
@@ -241,7 +239,8 @@ function onKeyClick(event) {
 
 function onKeyUp(event) {
   const k = event.key.toUpperCase()
-  if (k === "ENTER" || k === "BACKSPACE" || k.match(/^[A-Z]$/)) didPressKey(k)
+  if (k === "ESCAPE") closeSettings()
+  else if (k === "ENTER" || k === "BACKSPACE" || k.match(/^[A-Z]$/)) didPressKey(k)
 }
 
 document.addEventListener("click", onKeyClick)
@@ -434,6 +433,8 @@ async function onGameStart({
   playerCount,
   selfGuesses,
 }) {
+  if ($settings.style.display !== "none") closeSettings()
+
   rmClass(document.body, "game-off")
 
   gameID = _gameID
@@ -465,9 +466,15 @@ async function onGameStart({
 
     showPlayerGuessScore(window.player, score, guessNumber)
   })
+
+  if ($localGuessesWrapper.style.opacity !== 1) {
+    await Promise.all([fadeInUp($localGuessesWrapper), fadeInUp($keyboard)])
+  }
 }
 
 async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedWordCount }) {
+  if ($settings.style.display !== "none") closeSettings()
+
   showMessage("Game Over")
 
   gameID = null
