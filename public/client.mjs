@@ -10,7 +10,6 @@ const $playerNameInput = $("#settings #player-name")
 const $suggestName = $("#settings #suggest-name")
 const $countdownWrapper = $("#countdown")
 const $countdownBar = $("#countdown .bar")
-const $countdownTime = $("#countdown .time")
 const $eventLabel = $("#event-label")
 const $messageLabel = $("#message")
 const $localGuessesWrapper = $("#local-guesses-wrapper")
@@ -578,23 +577,12 @@ async function onPresenceChange({ player, present, playerCount }) {
   showPlayerCount(playerCount)
 }
 
-function formatRemainingTime(t) {
-  let seconds = Math.round(t / 1000)
-  let minutes = Math.floor(seconds / 60)
-  seconds -= minutes * 60
-  seconds = seconds.toString().padStart(2, "0")
-  minutes = (minutes > 0 ? minutes.toString() : "").padStart(2, "0")
-  return `${minutes}:${seconds}`
-}
-
 function startCountdownTimer(remainingTime, totalTime, hook) {
   $countdownBar.style.width = `100%`
 
   const updateTimeRemaining = () => {
     remainingTime = parseInt(Math.round(Math.max(remainingTime - 1000, 0)))
-    console.debug("remaining time:", remainingTime)
     $countdownBar.style.width = `${(100 * remainingTime) / totalTime}%`
-    if (remainingTime >= 0) $countdownTime.textContent = formatRemainingTime(remainingTime)
     hook?.(remainingTime)
     clearTimeout(countdownTimeout)
     if (remainingTime > 0)

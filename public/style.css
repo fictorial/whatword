@@ -301,7 +301,7 @@ main {
 header {
   display: grid;
   grid-template-columns: 0.5fr auto 0.5fr;
-  padding: 2vh 1vh;
+  padding: 2vh;
   padding-bottom: 0;
 }
 
