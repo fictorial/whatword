@@ -251,3 +251,20 @@ When done:
     remote# dokku config:unset whatword DEBUG
 
 See https://dokku.com/docs/deployment/logs/
+
+## Rate Limiting
+
+We don't want people trying to submit too many guesses or abuse the settings.
+One request per second per client should suffice.
+
+We could do this at the app level but it's better at the NGINX level.
+
+Add a NGINX config file at:
+
+    /home/dokku/whatword/nginx.conf.d/rate_limit.conf
+
+See etc/rate_limit.conf for the particulars.
+
+Try it: enter a junk word like SJGDS and hit enter quickly 3 times.
+Open the DevTools in Firefox and you should see those subsequent 2 XHRs
+with a response status code of 429.

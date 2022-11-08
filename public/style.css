@@ -672,6 +672,12 @@ header a[href="#settings"] {
   #orientation-warning {
     display: flex !important;
   }
+
+  #local-guesses-wrapper,
+  #all-guesses {
+    display: none !important;
+  }
+
 }
 
 @media (max-width: 400px) {
@@ -695,9 +701,5 @@ header a[href="#settings"] {
     padding: 0;
     background: none;
     border: none;
-  }
-
-  .countdown .meter {
-    display: none;
   }
 }
