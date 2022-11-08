@@ -99,12 +99,17 @@ async function fetchJSON({ path, data, method }) {
 const postJSON = async (path, data) => await fetchJSON({ path, data, method: "POST" })
 const getJSON = async (path) => await fetchJSON({ path, method: "GET" })
 
-function showMessage(text, automaticallyClear = true) {
+async function showMessage(text, automaticallyClear = true) {
   $messageLabel.textContent = text
+  $messageLabel.style.visibility = "visible"
+  await fadeIn($messageLabel)
+
   if (automaticallyClear) {
     clearTimeout(clearMessageLabelTimeout)
     clearMessageLabelTimeout = setTimeout(async () => {
-      if ($messageLabel.textContent === text) $messageLabel.textContent = null
+      await fadeOut($messageLabel)
+      $messageLabel.textContent = null
+      $messageLabel.style.visibility = "hidden"
     }, 400 * text.length)
   }
 }
@@ -115,7 +120,7 @@ async function showEvent(label, automaticallyClear = true) {
   if (automaticallyClear) {
     clearTimeout(clearEventLabelTimeout)
     clearEventLabelTimeout = setTimeout(async () => {
-      if ($eventLabel.textContent === label) hideEventLabel()
+      if ($eventLabel.textContent === label) await hideEventLabel()
     }, 400 * label.length)
   }
 }
@@ -291,19 +296,19 @@ function rmScoreDecorations() {
   document.querySelectorAll(".key").forEach(rmScoreClasses)
 }
 
-function showPlayerCount(playerCount) {
+async function showPlayerCount(playerCount) {
   const noun = playerCount !== 1 ? "players" : "player"
   showMessage(`${playerCount.toLocaleString()} ${noun} online`)
 }
 
 // score here is all the letters of the guess scored e.g. "nnesn"
 
-function onGuess({ player, score, guessNumber }) {
+async function onGuess({ player, score, guessNumber }) {
   const exactMatchesFound = score.match(exactMatchCountRegex)?.length ?? 0
 
   if (player.id === window.player.id) {
     const guess = localGuessLetters.join("")
-    onLocalPlayerGuessScored(score, guess, guessNumber)
+    await onLocalPlayerGuessScored(score, guess, guessNumber)
   } else if (exactMatchesFound > 0) {
     onRemotePlayerGuessScored(score)
   }
@@ -313,7 +318,7 @@ function onGuess({ player, score, guessNumber }) {
   showPlayerGuessScore(player, score, guessNumber)
 }
 
-function onLocalPlayerGuessScored(score, guess, guessNumber) {
+async function onLocalPlayerGuessScored(score, guess, guessNumber) {
   const exactMatchesFound = score.match(exactMatchCountRegex)?.length ?? 0
   const didGuessWord = exactMatchesFound === 5
   localPlayerGuessedWord = didGuessWord
@@ -380,14 +385,13 @@ function onLocalPlayerGuessScored(score, guess, guessNumber) {
     showFireworks()
   } else if (localGuessNumber === 5) {
     showMessage(randomElement(sorryMessages), false)
-    animate($localGuesses, "floating-genie")
   } else {
     localGuessNumber = guessNumber + 1
     localGuessLetters = []
   }
 }
 
-function onRemotePlayerGuessScored(score) {
+async function onRemotePlayerGuessScored(score) {
   const exactMatchesFound = score.match(exactMatchCountRegex)?.length ?? 0
   const didGuessWord = exactMatchesFound === 5
 
@@ -424,7 +428,7 @@ function showFireworks() {
   }, 250)
 }
 
-function onGameStart({
+async function onGameStart({
   gameID: _gameID,
   gameDuration: _gameDuration,
   timeRemaining,
@@ -438,13 +442,15 @@ function onGameStart({
   localPlayerGuessedWord = false
   localGuessLetters = []
 
-  showPlayerCount(playerCount)
+  showPlayerCount(playerCount) // no await
   rmScoreDecorations()
-  startCountdownTimer(timeRemaining, gameDuration)
+
+  // Assume it takes 500ms for the message to get to us from the server.
+  startCountdownTimer(1000 * Math.round((timeRemaining - 500) / 1000), gameDuration)
   clearLocalGuessLetters()
 
-  showMessage(gameID ? "Start guessing!" : "Waiting for next game to start...︎")
-  if ($eventLabel.textContent) hideEventLabel()
+  showMessage(gameID ? "Start guessing!" : "Waiting for next game to start...︎", false) // no await
+  if ($eventLabel.textContent) hideEventLabel() // no await
 
   // `selfGuesses` is when a player joins a game already in progress.
   // E.g. they reload the page after making a number of guesses.
@@ -452,8 +458,8 @@ function onGameStart({
   selfGuesses = selfGuesses ?? []
   localGuessNumber = selfGuesses.length
 
-  selfGuesses.forEach(({ guess, score }, guessNumber) => {
-    onLocalPlayerGuessScored(score, guess, guessNumber)
+  selfGuesses.forEach(async ({ guess, score }, guessNumber) => {
+    onLocalPlayerGuessScored(score, guess, guessNumber) // no await
 
     for (let letterNumber = 0; letterNumber < 5; ++letterNumber)
       getLocalGuessLetterElement(guessNumber, letterNumber).textContent = guess.charAt(letterNumber)
@@ -463,7 +469,7 @@ function onGameStart({
 }
 
 async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedWordCount }) {
-  showMessage("The game is over")
+  showMessage("Game Over")
 
   gameID = null
 
@@ -478,7 +484,11 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
     clearPlayerGuessScores()
   }
 
-  startCountdownTimer(interGameDelay, interGameDelay, async (remainingTime) => {
+  // Assume it takes 500ms for the message to get to us from the server.
+  const timeRemaining = 1000 * Math.round((interGameDelay - 500) / 1000)
+
+  startCountdownTimer(timeRemaining, interGameDelay, async (remainingTime) => {
+    // no await here and below:
     switch (remainingTime) {
       case 10000:
         showGuessedWordCountMessage(guessedWordCount)
@@ -490,10 +500,8 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
         break
       case 3000:
         showMessage("Get Ready!")
-        await fadeInUp($localGuessesWrapper)
-        break
-      case 1000:
-        await fadeInUp($keyboard)
+        fadeInUp($localGuessesWrapper)
+        fadeInUp($keyboard)
         break
     }
   })
@@ -501,7 +509,7 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
   addClass(document.body, "game-off")
 }
 
-function showGuessedWordCountMessage(guessedWordCount) {
+async function showGuessedWordCountMessage(guessedWordCount) {
   if (guessedWordCount === 0) showMessage("No one guessed the word!")
   else if (guessedWordCount === 1) {
     if (localPlayerGuessedWord) showMessage("You were the only player to guess the word!")
@@ -559,7 +567,7 @@ function clearPlayerGuessScores() {
   allPlayerGuessElements().forEach(rmScoreClasses)
 }
 
-function onPresenceChange({ player, present, playerCount }) {
+async function onPresenceChange({ player, present, playerCount }) {
   if (player.id === window.player.id)
     showMessage(`${player.name} has ${present ? "joined" : "left"}`)
 
@@ -583,9 +591,10 @@ function startCountdownTimer(remainingTime, totalTime, hook) {
   $countdownBar.style.width = `100%`
 
   const updateTimeRemaining = () => {
-    remainingTime = parseInt(Math.max(remainingTime - 1000, 0))
+    remainingTime = parseInt(Math.round(Math.max(remainingTime - 1000, 0)))
+    console.debug("remaining time:", remainingTime)
     $countdownBar.style.width = `${(100 * remainingTime) / totalTime}%`
-    if (remainingTime > 0) $countdownTime.textContent = formatRemainingTime(remainingTime)
+    if (remainingTime >= 0) $countdownTime.textContent = formatRemainingTime(remainingTime)
     hook?.(remainingTime)
     clearTimeout(countdownTimeout)
     if (remainingTime > 0)

@@ -200,10 +200,10 @@
 body {
   height: 100svh;
   text-rendering: optimizeLegibility;
-  background-image: linear-gradient(0deg, #000000, #150050, #3F0071, #FB2576);
-  background-image: linear-gradient(0deg, #598392, #01161e, #124559, #598392);
+  background-image: linear-gradient(0deg, black, purple, #29184f);
   color: #eff6e0;
   overflow: hidden;
+  transition: background-position 1.5s;
 }
 
 /* doesn't really work on iphones with the notch, etc. */
@@ -301,7 +301,8 @@ main {
 header {
   display: grid;
   grid-template-columns: 0.5fr auto 0.5fr;
-  padding: 1vh;
+  padding: 2vh 1vh;
+  padding-bottom: 0;
 }
 
 header>*:first-child {
@@ -320,8 +321,8 @@ header h1 {
 header .emoji {
   font-size: 3vh;
   position: absolute;
-  top: 50%;
-  left: 100%;
+  top: 56%;
+  left: 120%;
   translate: calc(-50% + 1.7vh) -50%;
   text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
@@ -345,6 +346,7 @@ header .emoji {
   border-radius: 1ch;
   height: 0.5vh;
   min-height: 8px;
+  transition: width 1s ease;
 }
 
 .countdown .time {
@@ -366,11 +368,11 @@ header .emoji {
 }
 
 body.game-off #countdown .bar {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 0, 0.3);
 }
 
 body.game-off #countdown .time {
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 0, 0.3);
 }
 
 header a[href="#settings"] {
@@ -439,13 +441,17 @@ header a[href="#settings"] {
 }
 
 #message {
-  opacity: 0.8;
-  font-size: 16px;
-  height: 20px;
+  font-size: 120%;
+  min-height: 1.3em;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #ffd134;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
 }
 
 #event-label {
@@ -524,7 +530,7 @@ header a[href="#settings"] {
   grid-auto-rows: 6vh;
   gap: 1vh;
   margin: 0 auto;
-  transform: perspective(20vmax) rotateX(10deg) translateY(-3vh);
+  transform: perspective(35vmax) rotateX(10deg) translateY(-3vh);
 }
 
 #local-guesses div {
