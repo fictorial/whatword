@@ -376,17 +376,15 @@ function onLocalPlayerGuessScored(score, guess, guessNumber) {
       if ($letter) animate($letter, "flip")
     }
 
-    showMessage(localGuessNumber === 6 ? "Alright! 😅" : randomElement(foundWordMessages))
-    setTimeout(() => showMessage("waiting for others to finish..."), 3000)
+    showMessage(randomElement(foundWordMessages), false)
     showFireworks()
-  } else if (localGuessNumber === 6 - 1) {
-    showMessage(randomElement(sorryMessages))
+  } else if (localGuessNumber === 5) {
+    showMessage(randomElement(sorryMessages), false)
+    animate($localGuesses, "floating-genie")
+  } else {
+    localGuessNumber = guessNumber + 1
+    localGuessLetters = []
   }
-
-  // Onward...
-
-  localGuessNumber = guessNumber + 1
-  localGuessLetters = []
 }
 
 function onRemotePlayerGuessScored(score) {
