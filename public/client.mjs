@@ -142,15 +142,15 @@ setExpertModeLabel()
 $showSettings.addEventListener("click", async function (event) {
   $settings.style.display = "flex"
 
+  event.stopPropagation()
+  event.preventDefault()
+
   await Promise.all([
     fadeIn($settings),
     fadeInUp($settingsForm),
     fadeOutDown($localGuessesWrapper),
     fadeOutDown($keyboard),
   ])
-
-  event.stopPropagation()
-  event.preventDefault()
 })
 
 $suggestName.addEventListener("click", async function (event) {
