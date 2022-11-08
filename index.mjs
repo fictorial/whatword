@@ -32,6 +32,7 @@ let isProduction = process.env.NODE_ENV === "production"
 
 const app = express()
 app.set("view engine", "ejs")
+app.set("trust proxy", isProduction)
 app.use(express.static("public"))
 app.use(cookieParser(process.env.SECRET ?? "bw9wOnRQve57-38i_MH5k"))
 app.use(express.json())
