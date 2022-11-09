@@ -5,7 +5,7 @@
   --no-match: rgba(45, 45, 45, 0.49);
   --no-match-text: rgba(219, 219, 219, 0.4);
 
-  --exact-match: #E233E8;
+  --exact-match: #309104;
   --exact-match-text: white;
 
   --shift-match: #DFAB31;
@@ -209,17 +209,20 @@
 body {
   height: 100svh;
   text-rendering: optimizeLegibility;
-  background-image: linear-gradient(180deg, #1e1955, #202448, #674ba2);
+  background-image: linear-gradient(180deg, #000, #0a1686, #674ba2), url('background.png');
+  background-blend-mode: difference;
   color: #eff6e0;
   overflow: hidden;
   transition: background-position 1.5s, box-shadow 1s;
+  background-size: cover;
+  background-position: center;
 }
 
 /* doesn't really work on iphones with the notch, etc. */
 
 @media(hover:hover) and (pointer:fine) {
   body {
-    box-shadow: inset 0 0 3vmin 0 #5bcdd5;
+    box-shadow: inset 0 0 2vmin 0 #ffd483;
   }
 
   body.game-off {
@@ -236,8 +239,8 @@ a {
 button {
   padding: 1vh;
   font-size: inherit;
-  background: #d9a630;
-  color: rgba(40, 40, 40, 0.85);
+  background: #758bb7;
+  color: rgb(47, 42, 87);
   outline: none;
   border-radius: 0.5vh;
   font-weight: bold;
@@ -270,7 +273,8 @@ input {
     border-top-color: rgba(255, 255, 255, 0.2);
     border-bottom-color: rgba(0, 0, 0, 0.2);
     box-shadow: 0 0.5vh 0.5vh 0 rgba(0, 0, 0, 0.25);
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(30, 30, 30, 0.9);
+    background: #7597d9;
   }
 }
 
@@ -301,14 +305,7 @@ main {
   color: var(--exact-match-text) !important;
 
   box-shadow:
-    inset 0 0 5px #fff,
-    inset 2px 0 1vmin #f0f,
-    inset -2px 0 1vmin #0ff,
-    inset 2px 0 30px #f0f,
-    inset -2px 0 30px #0ff,
-    0 0 5px #fff,
-    -1px 0 1vmin #f0f,
-    1px 0 1vmin #0ff;
+    inset 0 0 5px #fff;
 }
 
 .shift-match {
@@ -408,7 +405,7 @@ header a[href="#settings"] {
 }
 
 #settings {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.334);
   position: absolute;
   top: 0;
   left: 0;
@@ -480,7 +477,9 @@ header a[href="#settings"] {
   #settings>div {
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
-    box-shadow: none;
+    box-shadow: 0 -1vh 2vh 0 rgba(0, 0, 0, 0.5);
+    max-height: 60%;
+    overflow: scroll;
   }
 }
 

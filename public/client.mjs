@@ -429,6 +429,7 @@ async function onGameStart({
   //if ($settings.style.display === "flex") closeSettings()
 
   rmClass(document.body, "game-off")
+  document.body.style.backgroundBlendMode = "difference"
 
   gameID = _gameID
   gameDuration = _gameDuration
@@ -478,6 +479,8 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
 
   // HELLO => H E L L O (can do this with CSS too of course)
   showEvent(secretWord.replace(/./g, "$& ").slice(0, -1), false)
+
+  document.body.style.backgroundBlendMode = "color"
 
   // Assume it takes 500ms for the message to get to us from the server.
   const timeRemaining = 1000 * Math.round((interGameDelay - 500) / 1000)
