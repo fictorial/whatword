@@ -3,7 +3,7 @@ const $$ = document.querySelectorAll.bind(document)
 
 const $showSettings = $('a[href="#settings"]')
 const $settings = $("#settings")
-const $settingsForm = $("#settings > div")
+const $settingsModal = $("#settings-modal")
 const $settingsCloseButton = $("#settings-close")
 const $expertToggle = $("#settings #expert-mode")
 const $playerNameInput = $("#settings #player-name")
@@ -61,7 +61,14 @@ const reAddClass = ($el, ...args) => {
 async function animate($el, animationName) {
   return new Promise((resolve) => {
     reAddClass($el, animationName)
-    $el.addEventListener("animationend", resolve, { once: true })
+    $el.addEventListener(
+      "animationend",
+      function (event) {
+        console.debug("animationend", $el.id, event.animationName)
+        if (event.animationName === animationName) resolve()
+      },
+      { once: true }
+    )
   })
 }
 
@@ -144,14 +151,13 @@ $expertToggle.addEventListener("click", function (event) {
 setExpertModeLabel()
 
 $showSettings.addEventListener("click", async function (event) {
-  $settings.style.display = "flex"
-
   event.stopPropagation()
   event.preventDefault()
 
+  $settings.style.display = "flex"
+
   await Promise.all([
-    fadeIn($settings),
-    fadeInUp($settingsForm),
+    fadeInUp($settingsModal),
     fadeOutDown($localGuessesWrapper),
     fadeOutDown($keyboard),
   ])
@@ -166,9 +172,10 @@ $suggestName.addEventListener("click", async function (event) {
 })
 
 $playerNameInput.addEventListener("keyup", async (event) => {
-  if (event.key.toUpperCase() === "ENTER") await commitSettings()
   event.preventDefault()
   event.stopPropagation()
+
+  if (event.key.toUpperCase() === "ENTER") await commitSettings()
 })
 
 async function commitSettings() {
@@ -184,7 +191,7 @@ async function commitSettings() {
 }
 
 async function closeSettings() {
-  const anims = [fadeOutDown($settingsForm), fadeOut($settings)]
+  const anims = [fadeOutDown($settingsModal)]
   if (gameID) anims.push(fadeInUp($localGuessesWrapper), fadeInUp($keyboard))
   await Promise.all(anims)
 
@@ -438,7 +445,7 @@ async function onGameStart({
   playerCount,
   selfGuesses,
 }) {
-  //if ($settings.style.display === "flex") closeSettings()
+  if ($settings.style.display === "flex") await closeSettings()
 
   rmClass(document.body, "game-off")
   document.body.style.backgroundBlendMode = "difference"
@@ -479,6 +486,8 @@ async function onGameStart({
 }
 
 async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedWordCount }) {
+  if ($settings.style.display === "flex") await closeSettings()
+
   showMessage("Game Over")
 
   addClass(document.body, "game-off")
