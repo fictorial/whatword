@@ -445,7 +445,7 @@ async function onGameStart({
   startCountdownTimer(1000 * Math.round((timeRemaining - 500) / 1000), gameDuration)
   clearLocalGuessLetters()
 
-  showMessage(gameID ? "Start guessing!" : "Waiting for next game to start...︎", false)
+  showMessage(gameID ? "Go!" : "Waiting for next game to start...︎", false)
   if ($eventLabel.textContent) hideEventLabel()
 
   // `selfGuesses` is when a player joins a game already in progress.
