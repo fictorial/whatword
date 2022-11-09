@@ -377,7 +377,7 @@ async function onLocalPlayerGuessScored(score, guess, guessNumber) {
     showMessage(randomElement(foundWordMessages), false)
     showFireworks()
   } else if (localGuessNumber === 5) {
-    showMessage(randomElement(sorryMessages), false)
+    showMessage(`Out of guesses! ${randomElement(sorryMessages)}`, false)
   } else {
     localGuessNumber = guessNumber + 1
     localGuessLetters = []
