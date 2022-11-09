@@ -472,6 +472,10 @@ header a[href="#settings"] {
   background-color: rgba(255, 255, 255, 0.8);
 }
 
+#settings-close {
+  display: none;
+}
+
 @media(max-width: 500px) {
   #settings {
     justify-content: flex-end;
@@ -481,9 +485,25 @@ header a[href="#settings"] {
     border-top-left-radius: 1rem;
     border-top-right-radius: 1rem;
     box-shadow: 0 -1vh 2vh 0 rgba(0, 0, 0, 0.5);
-    max-height: 60%;
+    max-height: 70%;
     overflow: scroll;
+    position: relative;
   }
+
+  #settings-close {
+    display: inline;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.3);
+    padding: 0;
+    border: none;
+  }
+
 }
 
 #message {

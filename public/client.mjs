@@ -4,6 +4,7 @@ const $$ = document.querySelectorAll.bind(document)
 const $showSettings = $('a[href="#settings"]')
 const $settings = $("#settings")
 const $settingsForm = $("#settings > div")
+const $settingsCloseButton = $("#settings-close")
 const $expertToggle = $("#settings #expert-mode")
 const $playerNameInput = $("#settings #player-name")
 const $suggestName = $("#settings #suggest-name")
@@ -203,6 +204,15 @@ $settings.addEventListener("click", function (event) {
 
     commitSettings()
   }
+})
+
+// The small button with an X
+
+$settingsCloseButton.addEventListener("click", function (event) {
+  event.stopPropagation()
+  event.preventDefault()
+
+  commitSettings()
 })
 
 async function didPressKey(letter) {
@@ -469,8 +479,6 @@ async function onGameStart({
 }
 
 async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedWordCount }) {
-  //if ($settings.style.display === "flex") closeSettings()
-
   showMessage("Game Over")
 
   addClass(document.body, "game-off")
