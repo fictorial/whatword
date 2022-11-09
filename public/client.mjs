@@ -653,3 +653,10 @@ document.addEventListener("visibilitychange", () => {
     location.reload()
   }
 })
+
+const seenDurationKey = "seen-duration-msg"
+
+if (!localStorage.getItem(seenDurationKey)) {
+  localStorage.setItem(seenDurationKey, "1")
+  setTimeout(() => showEvent("New word every 2 minutes"), 2000)
+}
