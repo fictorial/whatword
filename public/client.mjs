@@ -320,7 +320,7 @@ async function onGuess({ player, score, guessNumber }) {
     const guess = localGuessLetters.join("")
     await onLocalPlayerGuessScored(score, guess, guessNumber)
   } else if (exactMatchesFound > 0) {
-    onRemotePlayerGuessScored(score)
+    onRemotePlayerGuessScored(player, score)
   }
 
   let $container = playerGuessesContainer(player.id)
@@ -401,7 +401,7 @@ async function onLocalPlayerGuessScored(score, guess, guessNumber) {
   }
 }
 
-async function onRemotePlayerGuessScored(score) {
+async function onRemotePlayerGuessScored(player, score) {
   const exactMatchesFound = score.match(exactMatchCountRegex)?.length ?? 0
   const didGuessWord = exactMatchesFound === 5
 
