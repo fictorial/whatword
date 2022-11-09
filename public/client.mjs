@@ -209,8 +209,10 @@ async function didPressKey(letter) {
   if (!gameID) return console.log("ignoring key press as game is inactive")
 
   if (letter === "BACKSPACE") localGuessLetters = localGuessLetters.slice(0, -1)
-  else if (letter === "ENTER" && localGuessLetters.length === 5) await submitGuess()
-  else if (letter.match(/^[A-Z]$/)) localGuessLetters.push(letter)
+  else if (letter === "ENTER") {
+    if (localGuessLetters.length === 5) await submitGuess()
+    else maybeShowGuessesAre5LettersMessage()
+  } else if (letter.match(/^[A-Z]$/)) localGuessLetters.push(letter)
 
   localGuessLetters = localGuessLetters.slice(0, 5)
 
@@ -654,9 +656,18 @@ document.addEventListener("visibilitychange", () => {
   }
 })
 
-const seenDurationKey = "seen-duration-msg"
+const seenDurationKey = "onetime-duration"
 
 if (!localStorage.getItem(seenDurationKey)) {
   localStorage.setItem(seenDurationKey, "1")
-  setTimeout(() => showEvent("New word every 2 minutes"), 2000)
+  setTimeout(() => showMessage("New word every 2 minutes"), 2000)
+}
+
+const guessesAre5LettersKey = "onetime-guesses5"
+
+function maybeShowGuessesAre5LettersMessage() {
+  if (!localStorage.getItem(guessesAre5LettersKey)) {
+    localStorage.setItem(guessesAre5LettersKey, "1")
+    showMessage("Guesses are 5 letters")
+  }
 }
