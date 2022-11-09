@@ -1,2 +1,7 @@
+## Performance
+- Safari desktop is saying that this uses significant energy. A quick
+  glance in developer tools shows lots of compositing. Perhaps less
+  semi-transparency. I'll have to research this more.
+
+## Later
 - NGINX rate limiting isn't working. Resorted to rate limiting at Express level.
-- countdown should start flashing red near 0
