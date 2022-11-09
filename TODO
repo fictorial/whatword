@@ -1,3 +1,2 @@
 - NGINX rate limiting isn't working. Resorted to rate limiting at Express level.
-- new icon
-- countdown should start flashing red near end
+- countdown should start flashing red near 0

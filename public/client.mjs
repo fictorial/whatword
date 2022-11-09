@@ -108,7 +108,7 @@ async function showMessage(text, automaticallyClear = true) {
       await fadeOut($messageLabel)
       $messageLabel.textContent = null
       $messageLabel.style.visibility = "hidden"
-    }, 400 * text.length)
+    }, 600 * text.length)
   }
 }
 
