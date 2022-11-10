@@ -16,6 +16,7 @@ const $localGuessesWrapper = $("#local-guesses-wrapper")
 const $localGuesses = $("#local-guesses")
 const $allGuesses = $("#all-guesses")
 const $keyboard = $("#keyboard")
+const $darthFader = $("#darth-fader")
 
 let gameID
 let gameDuration
@@ -437,6 +438,7 @@ function showFireworks() {
     )
   }, 250)
 }
+let isFirstGame = true
 
 async function onGameStart({
   gameID: _gameID,
@@ -448,7 +450,16 @@ async function onGameStart({
   if ($settings.style.display === "flex") await closeSettings()
 
   rmClass(document.body, "game-off")
-  document.body.style.backgroundBlendMode = "difference"
+
+  if (isFirstGame) {
+    await fadeOut($darthFader)
+    document.body.style.backgroundBlendMode = "difference"
+    isFirstGame = false
+  } else {
+    await fadeIn($darthFader)
+    document.body.style.backgroundBlendMode = "difference"
+    await fadeOut($darthFader)
+  }
 
   gameID = _gameID
   gameDuration = _gameDuration
@@ -496,10 +507,12 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
 
   await Promise.all([fadeOutDown($localGuessesWrapper), fadeOutDown($keyboard)])
 
+  await fadeIn($darthFader)
+  document.body.style.backgroundBlendMode = "color"
+  await fadeOut($darthFader)
+
   // HELLO => H E L L O (can do this with CSS too of course)
   showEvent(secretWord.replace(/./g, "$& ").slice(0, -1), false)
-
-  document.body.style.backgroundBlendMode = "color"
 
   // Assume it takes 500ms for the message to get to us from the server.
   const timeRemaining = 1000 * Math.round((interGameDelay - 500) / 1000)
@@ -688,3 +701,6 @@ function maybeShowGuessesAre5LettersMessage() {
     showMessage("Guesses are 5 letters")
   }
 }
+
+// clearFades($darthFader)
+// fadeOut($darthFader)

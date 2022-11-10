@@ -220,12 +220,11 @@ body {
   transition: background-position 1.5s, box-shadow 1s;
 }
 
-/* doesn't really work on iphones with the notch, etc. */
+/* shadow on body doesn't really work on iphones with the notch, etc. */
 
 @media(hover:hover) and (pointer:fine) {
   body {
     height: 100svh;
-    box-shadow: inset 0 0 2vmin 0 #ffd483;
   }
 
   body.game-off {
@@ -722,4 +721,14 @@ header a[href="#settings"] {
     background: none;
     border: none;
   }
+}
+
+#darth-fader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 999;
 }
