@@ -453,12 +453,15 @@ async function onGameStart({
 
   if (isFirstGame) {
     await fadeOut($darthFader)
+    $darthFader.style.display = "none"
     document.body.style.backgroundBlendMode = "difference"
     isFirstGame = false
   } else {
+    $darthFader.style.display = "block"
     await fadeIn($darthFader)
     document.body.style.backgroundBlendMode = "difference"
     await fadeOut($darthFader)
+    $darthFader.style.display = "none"
   }
 
   gameID = _gameID
@@ -507,9 +510,11 @@ async function onGameEnd({ gameID: _gameID, secretWord, interGameDelay, guessedW
 
   await Promise.all([fadeOutDown($localGuessesWrapper), fadeOutDown($keyboard)])
 
+  $darthFader.style.display = "block"
   await fadeIn($darthFader)
   document.body.style.backgroundBlendMode = "color"
   await fadeOut($darthFader)
+  $darthFader.style.display = "none"
 
   // HELLO => H E L L O (can do this with CSS too of course)
   showEvent(secretWord.replace(/./g, "$& ").slice(0, -1), false)
@@ -701,6 +706,3 @@ function maybeShowGuessesAre5LettersMessage() {
     showMessage("Guesses are 5 letters")
   }
 }
-
-// clearFades($darthFader)
-// fadeOut($darthFader)

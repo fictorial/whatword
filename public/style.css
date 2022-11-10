@@ -628,12 +628,12 @@ header a[href="#settings"] {
 
 .key {
   font-size: 3vh;
-  padding: 0.5vh 1.5vh !important;
+  padding: 0.6vh 1.6vh !important;
   border-radius: 0.5vh;
   background-color: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #eee;
-  width: 3vh;
+  width: 3.2vmax;
   min-width: 30px;
   display: flex;
   justify-content: center;
@@ -716,7 +716,7 @@ header a[href="#settings"] {
   .key {
     border: none;
     min-width: 8px;
-    font-size: 12pt;
+    font-size: 14pt;
     padding: 0;
     background: none;
     border: none;
