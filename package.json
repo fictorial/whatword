@@ -14,7 +14,7 @@
   "author": "Brian Hammond <fictorial>",
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=17"
+    "node": ">=18"
   },
   "dependencies": {
     "cookie-parser": "^1.4.6",
